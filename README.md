@@ -1,12 +1,10 @@
 # node-vw-carnet
 
-A client that can be used to call the Volkswagen Car-Net API via the <a href="https://www.portal.volkswagen-we.com/portal">We Connect</a> portal.
+A client that can be used to call the Volkswagen Car-Net API via the <a href="https://www.portal.volkswagen-we.com/portal">We Connect</a> portal. Since Volkswagen does not yet provide an open API, this module can be used as a workaround.
 
-Since Volkswagen does not yet provide a open API, this module can be used as a workaround.
+**NOTE**: It can of course break anytime, if Volkswagen changes their We Connect/Car Net portal.
 
-To login and get valid session cookies, <a href="https://github.com/puppeteer/puppeteer">puppeteer</a> is used. 
-
-The library can be used with either <a href="https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#puppeteer-vs-puppeteer-core">puppeteer or puppeteer-core</a>. That's why one of theese modules are needed as a (peer)dependency. 
+To login and get valid session cookies, <a href="https://github.com/puppeteer/puppeteer">puppeteer</a> is used. The library can be used with either <a href="https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#puppeteer-vs-puppeteer-core">puppeteer or puppeteer-core</a>. That's why one of theese modules are needed as a `peerDependency`.
 
 
 ### Installation
