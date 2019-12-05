@@ -85,7 +85,7 @@ export default class CarnetAPIClient {
       'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.70 Safari/537.36'
     };
 
-    logger.debug('CarnetSession() -- headers', this.headers);
+    logger.debug('CarnetAPIClient() -- headers', this.headers);
   }
 
   /**
@@ -93,12 +93,12 @@ export default class CarnetAPIClient {
    *
    * @return {Promise<{ [x: string]: any }>}
    */
-  async fetchCarDetails() {
+  async loadCarDetails() {
     const url = `${DASHBOARD_URL}/${this.carId}/-/mainnavigation/load-car-details/${this.carId}`;
 
-    this.logger.debug('>> fetchCarInfo()');
-    const json = await this.sendAction(url);
-    this.logger.debug('<< fetchCarInfo() - response', json);
+    this.logger.debug('>> loadCarDetails()');
+    const json = await this.triggerAction(url);
+    this.logger.debug('<< loadCarDetails() - response', json);
 
     return json;
   }
@@ -110,16 +110,16 @@ export default class CarnetAPIClient {
    * @param {boolean} on
    * @return {Promise<{ [x: string]: any }>}
    */
-  async setClimat(on) {
+  async triggerClimatisation(on) {
     const url = `${DASHBOARD_URL}/${this.carId}/-/emanager/trigger-climatisation`;
 
-    this.logger.debug('>> startClimat()');
-    const json = await this.sendAction(url, JSON.stringify({
+    this.logger.debug('>> triggerClimatisation()');
+    const json = await this.triggerAction(url, JSON.stringify({
       triggerAction: true,
       electricClima: on
     }));
 
-    this.logger.debug('<< startClimat() - response', json);
+    this.logger.debug('<< triggerClimatisation() - response', json);
 
     return json;
   }
@@ -128,27 +128,27 @@ export default class CarnetAPIClient {
    * Starts the window heating.
    * @return {Promise<{ [x: string]: any }>}
    */
-  async startWindowHeating() {
+  async triggerWindowheating() {
     const url = `${DASHBOARD_URL}/${this.carId}/-/emanager/trigger-windowheating`;
 
-    this.logger.debug('>> startWindowHeating()');
-    const json = await this.sendAction(url, JSON.stringify({
+    this.logger.debug('>> triggerWindowheating()');
+    const json = await this.triggerAction(url, JSON.stringify({
       triggerAction: true
     }));
-    this.logger.debug('<< startWindowHeating() - response', json);
+    this.logger.debug('<< triggerWindowheating() - response', json);
 
     return json;
   }
 
   /**
-   * Performs a POST request to the Carnet API.
+   * Performs a HTTP POST request to the Carnet API.
    *
    * @param {string} url
    * @param {(string | null)?} body
    * @return {Promise<{ [x: string]: any }>}
    */
-  async sendAction(url, body = null) {
-    this.logger.debug('>> sendAction() - url', url);
+  async triggerAction(url, body = null) {
+    this.logger.debug('>> triggerAction() - url', url);
 
     const res = await fetch(url, {
       body,
@@ -159,7 +159,7 @@ export default class CarnetAPIClient {
       headers: this.headers
     });
 
-    this.logger.debug('<< sendAction() - status', res.status);
+    this.logger.debug('<< triggerAction() - status', res.status);
 
     // TODO: Error handler.
     const json = await res.json();

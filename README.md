@@ -36,7 +36,7 @@ main()
 import puppeteer from 'puppeteer';
 import CarnetLoginHandler from 'node-vw-carnet';
  
-async function main(env) {
+async function main() {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
 
@@ -56,11 +56,11 @@ async function main(env) {
 
   // Successful login, now use the client.
   // Get car details.
-  const carDetails = await client.fetchCarDetails();
-  console.log('car details:', carDetails);
+  const details = await client.loadCarDetails();
+  console.log('car details:', details);
 
   // Start the climate heater.
-  const response = await client.setClimat(true);
+  const response = await client.triggerClimatisation(true);
   console.log('response:', response);
 }
 ```
