@@ -12,6 +12,10 @@
     "postpublish": "rm -rf types",
     "generate-jsdoc": "tsc -p tsconfig.json"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nekman/node-vw-carnet.git"
+  },
   "keywords": [
     "Volkswagen",
     "we-connect",
