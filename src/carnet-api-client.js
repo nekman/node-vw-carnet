@@ -105,9 +105,8 @@ export default class CarnetAPIClient {
 
   /**
    * Turn on/off electric climate.
-   * `setClimat(true)` => on
-   * `setClimat(false)` => off
-   * @param {boolean} on
+   *
+   * @param {boolean} on If `true` start, if `false` stop climate heating.
    * @return {Promise<{ [x: string]: any }>}
    */
   async triggerClimatisation(on) {
