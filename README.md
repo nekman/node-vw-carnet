@@ -42,7 +42,8 @@ async function main(env) {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
 
-  // Create the puppeteer login client
+  // Create the puppeteer login client by sending in
+  // the puppeteer.Page (and a optional logger, can be skipped).
   const handler = new CarnetLoginHandler(page, console);
 
   // Try to login with your username and password.
@@ -57,12 +58,13 @@ async function main(env) {
 
   // Successful login, now use the client.
   // Get car details.
-  const carDetails = await session.fetchCarDetails();
+  const carDetails = await client.fetchCarDetails();
   console.log('car details:', carDetails);
 
   // Start the climate heater.
-  const response = await session.setClimat(true);
+  const response = await client.setClimat(true);
   console.log('response:', response);
+}
 ```
 
 #### With puppeteer-core
