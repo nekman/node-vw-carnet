@@ -19,3 +19,4 @@ export const defaultLogger = {
   log: noopLogger,
   error: noopLogger
 };
+

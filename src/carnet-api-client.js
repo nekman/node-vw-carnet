@@ -1,59 +1,24 @@
 import fetch from 'node-fetch';
 import https from 'https';
 import { defaultLogger } from './utils';
+import * as Validation from './validation';
 import { BASE_URL, DASHBOARD_URL } from './constants';
 
 /** @typedef {{ name: string, value: string }} CarnetCookie */
 /** @typedef {{ csrfToken: string, carId: string, cookies: CarnetCookie[] }} SessionOptions */
+/** @typedef {{ errorCode: string, [x: string]: any }} CarnetJSONResponse */
 
 /**
- *
+ * @private
  * @param {CarnetCookie[]} cookies
  */
-export function validateCookies(cookies) {
-
-  if (!Array.isArray(cookies) || cookies.length < 1) {
-    throw new Error('Missing "cookies" in options!');
-  }
-
-  cookies.forEach(cookie => {
-    if (!('name' in cookie)) {
-      // eslint-disable-next-line no-console
-      console.error('Missing "name" in cookie!', cookie);
-    }
-
-    if (!('value' in cookie)) {
-      // eslint-disable-next-line no-console
-      console.error('Missing "value" in cookie!', cookie);
-      throw new Error('Missing "value" in cookie!');
-    }
-  });
+function cookiesAsString(cookies) {
+  return cookies.map(c => `${c.name}=${c.value};`).join(' ');
 }
 
 /**
- *
- * @param {SessionOptions} options
- * @param {typeof defaultLogger} logger
+ * The Carnet API client.
  */
-// @ts-ignore
-export function validate(options, logger) {
-  if (!logger) {
-    throw new Error('Missing logger!');
-  }
-
-  if (!options) {
-    throw new Error('Missing session options!');
-  }
-
-  if (!options.carId) {
-    throw new Error('Missing "carId" in options!');
-  }
-
-  if (!options.csrfToken) {
-    throw new Error('Missing "csrfToken" in options!');
-  }
-}
-
 export default class CarnetAPIClient {
 
   /**
@@ -63,22 +28,22 @@ export default class CarnetAPIClient {
    */
   // @ts-ignore
   constructor(options, logger = defaultLogger) {
-    validate(options, logger);
+    Validation.validate(options, logger);
 
     this.carId = options.carId;
     this.logger = logger;
 
     /** @type {{ [x: string]: string }} */
     this.headers = {
-      cookie: CarnetAPIClient.cookiesAsString(options.cookies),
-      'accept-encoding': 'gzip, deflate, br',
-      accept: 'application/json, text/plain, */*',
-      'accept-language': 'sv-SE,sv;q=0.9,en-US;q=0.8,en;q=0.7',
-      'cache-control': 'no-cache',
-      'content-type': 'application/json;charset=utf-8',
+      cookie: cookiesAsString(options.cookies),
       pragma: 'no-cache',
       origin: BASE_URL,
       referer: `${DASHBOARD_URL}/${this.carId}`,
+      accept: 'application/json, text/plain, */*',
+      'accept-encoding': 'gzip, deflate, br',
+      'accept-language': 'sv-SE,sv;q=0.9,en-US;q=0.8,en;q=0.7',
+      'cache-control': 'no-cache',
+      'content-type': 'application/json;charset=utf-8',
       'sec-fetch-mode': 'cors',
       'sec-fetch-site': 'same-origin',
       'x-csrf-token': options.csrfToken,
@@ -89,9 +54,54 @@ export default class CarnetAPIClient {
   }
 
   /**
-   * Fetch the car details.
+   * Get the car location (lat, lon).
    *
-   * @return {Promise<{ [x: string]: any }>}
+   * @return {Promise<CarnetJSONResponse>}
+   */
+  async getLocation() {
+    const url = `${DASHBOARD_URL}/${this.carId}/-/cf/get-location`;
+
+    this.logger.debug('>> getLocation()');
+    const json = await this.triggerAction(url);
+    this.logger.debug('<< getLocation() - response', json);
+
+    return json;
+  }
+
+  /**
+   * Get the fully loaded car info (?).
+   *
+   * @return {Promise<CarnetJSONResponse>}
+   */
+  async getFullyLoadedCars() {
+    const url = `${DASHBOARD_URL}/${this.carId}/-/mainnavigation/get-fully-loaded-cars`;
+
+    this.logger.debug('>> getFullyLoadedCars()');
+    const json = await this.triggerAction(url);
+    this.logger.debug('<< getFullyLoadedCars() - response', json);
+
+    return json;
+  }
+
+  /**
+   * Get the complete vehicle JSON.
+   *
+   * @return {Promise<CarnetJSONResponse>}
+   */
+  async getCompleteVehicleJson() {
+    const url = `${DASHBOARD_URL}/${this.carId}`;
+
+    this.logger.debug('>> getCompleteVehicleJson()');
+    const json = await this.triggerAction(url);
+    this.logger.debug('<< getCompleteVehicleJson() - response', json);
+
+    return json;
+  }
+
+  /**
+   * Load the car details.
+   *
+   * @return {Promise<CarnetJSONResponse>}
    */
   async loadCarDetails() {
     const url = `${DASHBOARD_URL}/${this.carId}/-/mainnavigation/load-car-details/${this.carId}`;
@@ -107,7 +117,7 @@ export default class CarnetAPIClient {
    * Turn on/off electric climate.
    *
    * @param {boolean} on If `true` start, if `false` stop climate heating.
-   * @return {Promise<{ [x: string]: any }>}
+   * @return {Promise<CarnetJSONResponse>}
    */
   async triggerClimatisation(on) {
     const url = `${DASHBOARD_URL}/${this.carId}/-/emanager/trigger-climatisation`;
@@ -125,7 +135,7 @@ export default class CarnetAPIClient {
 
   /**
    * Starts the window heating.
-   * @return {Promise<{ [x: string]: any }>}
+   * @return {Promise<CarnetJSONResponse>}
    */
   async triggerWindowheating() {
     const url = `${DASHBOARD_URL}/${this.carId}/-/emanager/trigger-windowheating`;
@@ -140,11 +150,95 @@ export default class CarnetAPIClient {
   }
 
   /**
+   * Get the vehicle details.
+   * @return {Promise<CarnetJSONResponse>}
+   */
+  async getPSPStatus() {
+    const url = `${DASHBOARD_URL}/${this.carId}/-/mainnavigation/get-psp-status`;
+
+    this.logger.debug('>> getPSPStatus()');
+    const json = await this.triggerAction(url);
+    this.logger.debug('<< getPSPStatus() - response', json);
+
+    return json;
+  }
+
+  /**
+   * Get the vehicle details.
+   * @return {Promise<CarnetJSONResponse>}
+   */
+  async getVehicleDetails() {
+    const url = `${DASHBOARD_URL}/${this.carId}/-/vehicle-info/get-vehicle-details`;
+
+    this.logger.debug('>> getVehicleDetails()');
+    const json = await this.triggerAction(url);
+    this.logger.debug('<< getVehicleDetails() - response', json);
+
+    return json;
+  }
+
+  /**
+   * Get the vehicle status data.
+   * @return {Promise<CarnetJSONResponse>}
+   */
+  async getVehicleStatusReport() {
+    const url = `${DASHBOARD_URL}/${this.carId}/-/vsr/get-vsr`;
+
+    this.logger.debug('>> getVehicleStatusReport()');
+    const json = await this.triggerAction(url);
+    this.logger.debug('<< getVehicleStatusReport() - response', json);
+
+    return json;
+  }
+
+  /**
+   * Get latest vehicle report.
+   * @return {Promise<CarnetJSONResponse>}
+   */
+  async getLatestReport() {
+    const url = `${DASHBOARD_URL}/${this.carId}/-/vhr/get-latest-report`;
+
+    this.logger.debug('>> getLatestReport()');
+    const json = await this.triggerAction(url);
+    this.logger.debug('<< getLatestReport() - response', json);
+
+    return json;
+  }
+
+  /**
+   * Get e-manager info.
+   * @return {Promise<CarnetJSONResponse>}
+   */
+  async getEmanager() {
+    const url = `${DASHBOARD_URL}/${this.carId}/-/emanager/get-emanager`;
+
+    this.logger.debug('>> getEmanager()');
+    const json = await this.triggerAction(url);
+    this.logger.debug('<< getEmanager() - response', json);
+
+    return json;
+  }
+
+  /**
+   * Get statistics about the latest trip.
+   * @return {Promise<CarnetJSONResponse>}
+   */
+  async getLatestTripStatistics() {
+    const url = `${DASHBOARD_URL}/${this.carId}/-/rts/get-latest-trip-statistics`;
+
+    this.logger.debug('>> getLatestTripStatistics()');
+    const json = await this.triggerAction(url);
+    this.logger.debug('<< getLatestTripStatistics() - response', json);
+
+    return json;
+  }
+
+  /**
    * Performs a HTTP POST request to the Carnet API.
    *
    * @param {string} url
    * @param {(string | null)?} body
-   * @return {Promise<{ [x: string]: any }>}
+   * @return {Promise<CarnetJSONResponse>}
    */
   async triggerAction(url, body = null) {
     this.logger.debug('>> triggerAction() - url', url);
@@ -170,11 +264,4 @@ export default class CarnetAPIClient {
     return json;
   }
 
-  /**
-   *
-   * @param {CarnetCookie[]} cookies
-   */
-  static cookiesAsString(cookies) {
-    return cookies.map(c => `${c.name}=${c.value};`).join(' ');
-  }
 }

@@ -79,8 +79,6 @@ export default class CarnetLoginHandler {
     logger.debug('-- login() - csrfToken:', csrfToken.toString());
     logger.debug('-- login() -- url', response.url());
     const cookies = await page.cookies();
-    logger.debug('-- login() -- cookies', cookies);
-
     const [, carIdentifier] = response.url().split('dashboard/');
 
     return new CarnetAPIClient({

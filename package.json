@@ -6,7 +6,8 @@
   "module": "main.js",
   "types": "types/main.d.ts",
   "scripts": {
-    "test": "echo \"No tests :/\"",
+    "test": "echo \"No tests yet. For manual integration test - npm run manual:test\"",
+    "manual:test": "node -r esm test/manual_test.js",
     "eslint": "eslint -c .eslintrc ./index.js ./src",
     "prepublishOnly": "npm run generate-jsdoc",
     "postpublish": "rm -rf types",
