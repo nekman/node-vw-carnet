@@ -30,6 +30,10 @@ export default class CarnetAPIClient {
   constructor(options, logger = defaultLogger) {
     Validation.validate(options, logger);
 
+    // expose so options so it's possible to
+    // use from other clients if needed.
+    this.options = options;
+
     this.carId = options.carId;
     this.logger = logger;
 
