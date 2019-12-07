@@ -1,7 +1,7 @@
 {
   "name": "node-vw-carnet",
   "version": "0.0.2",
-  "description": "Node package that connects to the VW Carnet via the we-connect portal.",
+  "description": "Connects to the VW Car-Net via the we-connect portal.",
   "main": "index.js",
   "module": "main.js",
   "types": "types/main.d.ts",

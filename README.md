@@ -2,9 +2,9 @@
 
 A client that can be used to call the Volkswagen Car-Net API via the <a href="https://www.portal.volkswagen-we.com/portal">We Connect</a> portal. Since Volkswagen does not yet provide an open API, this module can be used as a workaround.
 
-**NOTE**: It can of course break anytime, if Volkswagen changes their We Connect/Car Net portal.
+**NOTE**: This library will break when Volkswagen changes their We Connect/Car-Net portal.
 
-To login and get valid session cookies, <a href="https://github.com/puppeteer/puppeteer">puppeteer</a> is used. The library can be used with either <a href="https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#puppeteer-vs-puppeteer-core">puppeteer or puppeteer-core</a>. That's why one of theese modules are needed as a `peerDependency`.
+To login and get valid session cookies, <a href="https://github.com/puppeteer/puppeteer">puppeteer</a> is used. The library can be used with either <a href="https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#puppeteer-vs-puppeteer-core">puppeteer or puppeteer-core</a>.
 
 
 ### Installation
@@ -47,8 +47,8 @@ async function main() {
   // Try to login with your username and password.
   // The login will take ~10 seconds... 
   const client = await handler.createClient({
-    email: process.env.EMAIL,
-    password: process.env.PASS
+    email: process.env.EMAIL, // your carnet email
+    password: process.env.PASS // your carnet password
   });
 
   // Close chrome browser since it's not needed anymore.
@@ -67,4 +67,31 @@ async function main() {
 
 #### With puppeteer-core
 
-TBD.
+```javascript
+import puppeteer from 'puppeteer';
+import CarnetLoginHandler from 'node-vw-carnet';
+
+async function main() {
+  const browser = await puppeteer.launch({  
+    executablePath: '<path to chrome>' // /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome
+  });
+
+  // ...
+}
+```
+
+### Building
+
+```bash
+# clone this repo
+git clone https://github.com/nekman/node-vw-carnet.git
+
+# install dependencies
+npm i
+
+# lint
+npm run eslint
+
+# manual test
+EMAIL=<your carnet email> PASS=<your carnet pass> npm run manual:test
+```
