@@ -8,6 +8,7 @@ import { BASE_URL, DASHBOARD_URL } from './constants';
 /** @typedef {{ csrfToken: string, carId: string, cookies: CarnetCookie[] }} SessionOptions */
 /** @typedef {{ errorCode: string, [x: string]: any }} CarnetJSONResponse */
 
+
 /**
  * @private
  * @param {CarnetCookie[]} cookies
@@ -25,9 +26,10 @@ export default class CarnetAPIClient {
    *
    * @param {SessionOptions} options
    * @param {typeof defaultLogger?} logger
+   * @param {((url: RequestInfo, init?: RequestInit) => Promise<Response>)?} http
    */
   // @ts-ignore
-  constructor(options, logger = defaultLogger) {
+  constructor(options, logger = defaultLogger, http = fetch) {
     Validation.validate(options, logger);
 
     // expose options so it's possible to
@@ -36,6 +38,7 @@ export default class CarnetAPIClient {
 
     this.carId = options.carId;
     this.logger = logger;
+    this.fetch = http;
 
     /** @type {{ [x: string]: string }} */
     this.headers = {
@@ -247,8 +250,9 @@ export default class CarnetAPIClient {
   async triggerAction(url, body = null) {
     this.logger.debug('>> triggerAction() - url', url);
 
-    const res = await fetch(url, {
+    const res = await this.fetch(url, {
       body,
+      // @ts-ignore
       agent: new https.Agent({
         rejectUnauthorized: false
       }),

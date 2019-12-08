@@ -18,7 +18,7 @@ npm i puppeteer -S
 npm i node-vw-carnet -S
 ```
 
-### Examples
+### Usage
 
 The `main` function in all examples below are called like this:
 ```javascript
@@ -29,6 +29,10 @@ main()
   process.exit(1);
 });
 ```
+
+#### Login
+It takes a long time to log in (normally around 5-20 seconds). The reason is that the We-Connect portal takes some time to respond. Once the login is complete, you can save the `CarnetAPIClient` instance (or information) and call the Car-Net API directly (this is done with <a href="https://github.com/bitinn/node-fetch">node-fetch</a>) and the responses from these calls are usually quick.
+
 
 #### With puppeteer
 
@@ -78,6 +82,36 @@ async function main() {
 
   // ...
 }
+```
+
+### Available client methods
+
+The following methods are available on the `CarnetAPIClient`. All methods
+returns `Promise<CarNetJSONResponse>`
+
+```typescript
+interface CarNetJSONRespose {
+  [x: string]: any;
+  // If errorCode is '0' the request was successfull OK
+  errorCode: string;
+}
+```
+
+```typescript
+getLocation()
+getFullyLoadedCars()
+getCompleteVehicleJson()
+loadCarDetails()
+triggerClimatisation(on: boolean)
+triggerWindowheating()
+getPSPStatus()
+getVehicleDetails()
+getVehicleStatusReport()
+getLatestReport()
+getEmanager()
+getLatestTripStatistics()
+// Can be used if this library have missed a certain method.
+triggerAction(url, body = null)
 ```
 
 ### Building
