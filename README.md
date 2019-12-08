@@ -92,7 +92,7 @@ returns `Promise<CarNetJSONResponse>`
 ```typescript
 interface CarNetJSONRespose {
   [x: string]: any;
-  // If errorCode is '0' the request was successfull OK
+  // If errorCode is '0' the request was successfull
   errorCode: string;
 }
 ```
