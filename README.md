@@ -72,7 +72,7 @@ async function main() {
 #### With puppeteer-core
 
 ```javascript
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 import CarnetLoginHandler from 'node-vw-carnet';
 
 async function main() {
