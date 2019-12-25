@@ -2,12 +2,16 @@
 
 A client that can be used to call the Volkswagen Car-Net API via the <a href="https://www.portal.volkswagen-we.com/portal">We Connect</a> portal. Since Volkswagen does not yet provide an open API, this module can be used as a workaround.
 
+
 **NOTE**: This library will break when Volkswagen changes their We Connect/Car-Net portal.
 
 To login and get valid session cookies, <a href="https://github.com/puppeteer/puppeteer">puppeteer</a> is used. The library can be used with either <a href="https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#puppeteer-vs-puppeteer-core">puppeteer or puppeteer-core</a>.
 
+### Example
+Here is an <a href="https://github.com/nekman/node-vw-carnet-lambda">example</a> where this library is used in a REST API on a AWS Lambda.
 
-### Installation
+
+## Installation
 ```bash
 # install puppeteer
 npm i puppeteer -S
@@ -129,3 +133,6 @@ npm run eslint
 # manual test
 EMAIL=<your carnet email> PASS=<your carnet pass> npm run manual:test
 ```
+
+### Q: Why puppeteer?
+A: Easier to login to the We Connect Portal. I can of course do like other <a href="https://github.com/reneboer/python-carnet-client/blob/master/we_connect_client.py#L105">libraries and perform all required login steps</a>, but next time Volkswagen changes their We Connect portal a new time consuming login procedure needs to be implemented. Changes will be easier to handle with Puppeteer.

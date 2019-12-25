@@ -1,6 +1,6 @@
 {
   "name": "node-vw-carnet",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Connects to the VW Car-Net via the we-connect portal.",
   "main": "index.js",
   "module": "main.js",
