@@ -131,8 +131,8 @@ export default class CarnetAPIClient {
 
     this.logger.debug('>> triggerClimatisation()');
     const json = await this.triggerAction(url, JSON.stringify({
-      triggerAction: true,
-      electricClima: on
+      triggerAction: on,
+      electricClima: true
     }));
 
     this.logger.debug('<< triggerClimatisation() - response', json);
